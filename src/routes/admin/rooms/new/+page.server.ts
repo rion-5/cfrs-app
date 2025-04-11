@@ -5,11 +5,11 @@ import { redirect } from '@sveltejs/kit';
 
 export const actions: Actions = {
   default: async ({ request }) => {
-    const data = await request.formData();
-    const name = data.get('name') as string;
-    const type = data.get('type') as 'STUDY' | 'LECTURE' | 'READING';
-    const capacity = parseInt(data.get('capacity') as string);
-    const location = data.get('location') as string;
+    const formData = await request.formData();
+    const name = formData.get('name') as string;
+    const type = formData.get('type') as 'STUDY' | 'LECTURE' | 'READING';
+    const capacity = parseInt(formData.get('capacity') as string);
+    const location = formData.get('location') as string;
 
     await prisma.room.create({
       data: { name, type, capacity, location }
