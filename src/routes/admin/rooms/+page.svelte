@@ -5,13 +5,14 @@
   export let data;
     // 프론트에서 보여줄 label과 type을 매핑
     const typeLabels = {
-    LECTURE: '강의실',
-    STUDY: '토론실',
-    READING: '도담'
+      STUDY: 'IC-PBL 토론실',  
+    READING: '도담',
+    LECTURE: '강의실'
+
   };
 
   // 현재 선택된 탭
-  let currentType: keyof typeof typeLabels = 'LECTURE';
+  let currentType: keyof typeof typeLabels = 'STUDY';
 
   // 필터링된 방 목록
   $: filteredRooms = data.rooms.filter((room) => room.type === currentType);
@@ -31,7 +32,7 @@
           class={`px-4 py-2 rounded-full border ${
             currentType === type ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 border-gray-300'
           }`}
-          on:click={() => (currentType = type)}
+          on:click={() => (currentType = type as keyof typeof typeLabels)}
         >
           {label}
         </button>
@@ -42,23 +43,19 @@
     <table class="min-w-full bg-white border border-gray-200">
       <thead class="bg-gray-100">
         <tr>
-          <th class="text-left px-4 py-3 border-b border-gray-200">구분</th>
-          <th class="text-left px-4 py-3 border-b border-gray-200">이름</th>
-          <th class="text-left px-4 py-3 border-b border-gray-200">수용 인원</th>
-          <th class="text-left px-4 py-3 border-b border-gray-200">위치</th>
-          <th class="text-left px-4 py-3 border-b border-gray-200">관리</th>
+          <th class="text-center px-4 py-3 border-b border-gray-200">이름</th>
+          <th class="text-center px-4 py-3 border-b border-gray-200">수용 인원</th>
+          <th class="text-center px-4 py-3 border-b border-gray-200">위치</th>
+          <th class="text-center px-4 py-3 border-b border-gray-200">관리</th>
         </tr>
       </thead>
       <tbody>
-        {#each data.rooms as room}
+        {#each filteredRooms as room}
           <tr class="hover:bg-gray-50 transition">
-            <td class="px-4 py-2 border-b border-gray-100">
-              {roomTypeLabels[room.type] ?? room.type}
-            </td>
-            <td class="px-4 py-2 border-b border-gray-100">{room.name}</td>
-            <td class="px-4 py-2 border-b border-gray-100">{room.capacity}</td>
-            <td class="px-4 py-2 border-b border-gray-100">{room.location}</td>
-            <td class="px-4 py-2 border-b border-gray-100">
+            <td class="text-center px-4 py-2 border-b border-gray-100">{room.name}</td>
+            <td class="text-center px-4 py-2 border-b border-gray-100">{room.capacity}명</td>
+            <td class="text-center px-4 py-2 border-b border-gray-100">{room.location}</td>
+            <td class="text-center px-4 py-2 border-b border-gray-100">
               <a href={`/admin/rooms/${room.id}/edit`} class="text-blue-600 hover:underline">수정</a>
               <form method="POST" action="?/delete" class="inline">
                 <input type="hidden" name="id" value={room.id} />
