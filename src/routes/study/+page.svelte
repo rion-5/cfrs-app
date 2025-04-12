@@ -24,9 +24,35 @@
     return !(room === '토론실 2' && time === '13') && !(room === '토론실 4' && time === '10');
   }
 
-  function reserve(room: string, time: string) {
-    alert(`${room}의 ${time}시 예약 완료!`);
+  // function reserve(room: string, time: string) {
+  //   alert(`${room}의 ${time}시 예약 완료!`);
+  // }
+  async function reserve(room: string, time: string) {
+  const payload = {
+    date: $selectedDate,
+    room,
+    startTime: time,
+    userId: '20201234',
+    name: '홍길동',
+    email: 'hong@school.ac.kr',
+    phone: '010-1234-5678'
+  };
+
+  const res = await fetch('/api/reservations', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+
+  if (res.ok) {
+    alert(`${room} ${time} 예약 성공!`);
+    // 새로고침 또는 예약된 시간 제거 로직 필요
+  } else {
+    const err = await res.json();
+    alert(`예약 실패: ${err.message}`);
   }
+}
+
 </script>
 
 <div class="p-4">
