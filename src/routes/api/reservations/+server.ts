@@ -1,32 +1,23 @@
-// import type { RequestHandler } from '@sveltejs/kit';
-// import { json } from '@sveltejs/kit';
-// import db from '$lib/server/prisma';
+// // src/routes/api/reservations/+server.ts
+import type { RequestHandler } from '@sveltejs/kit';
+import { sql } from '$lib/server/db';
 
-// export const POST: RequestHandler = async ({ request }) => {
-//   const data = await request.json();
-//   const { date, room, startTime, userId, name, email, phone } = data;
+export const GET: RequestHandler = async ({ url }) => {
+	const date = url.searchParams.get('date');
+	if (!date) return new Response('Missing date parameter', { status: 400 });
 
-//   // 예약 중복 확인 (예시)
-//   const existing = await db.reservation.findFirst({
-//     where: { date, room, startTime }
-//   });
+	try {
+		const result = await sql`
+			SELECT * FROM "Reservation"
+			WHERE DATE("startTime") = ${date}
+			ORDER BY "startTime"
+		`;
 
-//   if (existing) {
-//     return json({ message: '이미 예약된 시간입니다.' }, { status: 409 });
-//   }
-
-//   // 저장
-//   await db.reservation.create({
-//     data: {
-//       date,
-//       room,
-//       startTime,
-//       userId,
-//       name,
-//       email,
-//       phone
-//     }
-//   });
-
-//   return json({ message: '예약 성공' });
-// };
+		return new Response(JSON.stringify(result.rows), {
+			headers: { 'Content-Type': 'application/json' }
+		});
+	} catch (err) {
+		console.error(err);
+		return new Response('Internal Server Error', { status: 500 });
+	}
+};
