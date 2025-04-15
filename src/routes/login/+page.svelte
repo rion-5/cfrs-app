@@ -42,7 +42,7 @@
                 });
 				error = null;
 				const target = $page.url.searchParams.get('redirect') || '/';
-				goto('/');
+				goto(target);
 			} else {
 				error = result.message;
 			}
